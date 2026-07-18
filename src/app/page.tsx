@@ -1,65 +1,96 @@
-import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  Check,
+  DoorOpen,
+  Users,
+} from "lucide-react";
+import { Brand } from "@/components/common/brand";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { getCurrentProfile } from "@/lib/auth/get-current-profile";
+import { getRoleDashboard } from "@/lib/auth/get-role-dashboard";
 
-export default function Home() {
+const categories = [
+  { name: "Day Pass", icon: CalendarDays },
+  { name: "Meeting Room", icon: Users },
+  { name: "Dedicated Desk", icon: Building2 },
+  { name: "Private Cabin", icon: DoorOpen },
+];
+
+export default async function Home() {
+  let profile = null;
+  try {
+    profile = await getCurrentProfile();
+  } catch {
+    /* Setup may not be complete yet. */
+  }
+  const href = profile ? getRoleDashboard(profile.role) : "/login";
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main className="min-h-screen overflow-hidden">
+      <header className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
+        <Brand />
+        <Link href={href} className={buttonVariants({ size: "lg" })}>
+          {profile ? "Open dashboard" : "Sign in"}
+          <ArrowRight />
+        </Link>
+      </header>
+      <section className="relative mx-auto grid max-w-7xl gap-14 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center lg:pb-28 lg:pt-24">
+        <div>
+          <p className="eyebrow mb-5">Workspace operations, unified</p>
+          <h1 className="max-w-3xl text-4xl font-semibold leading-[1.08] tracking-[-0.04em] sm:text-6xl">
+            The operating system for modern workspaces.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+            OperatorOS brings operator provisioning, location operations,
+            inventory, and bookings into one calm, connected platform.
           </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href={href}
+              className={cn(buttonVariants({ size: "lg" }), "h-11 px-5")}
+            >
+              {profile ? "Go to dashboard" : "Access OperatorOS"}
+              <ArrowRight />
+            </Link>
+            <div className="flex items-center gap-2 px-3 text-sm text-muted-foreground">
+              <span className="flex size-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                <Check className="size-3" />
+              </span>
+              Phase 1 foundation is ready
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div className="relative">
+          <div className="absolute -inset-10 -z-10 rounded-full bg-primary/10 blur-3xl" />
+          <div className="surface-card overflow-hidden p-2">
+            <div className="rounded-xl bg-slate-950 p-6 text-white sm:p-8">
+              <p className="text-sm text-slate-400">
+                Built for every way people work
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold">
+                One platform. Four workspace categories.
+              </h2>
+              <div className="mt-8 grid grid-cols-2 gap-3">
+                {categories.map(({ name, icon: Icon }) => (
+                  <div
+                    key={name}
+                    className="rounded-xl border border-white/10 bg-white/[0.06] p-4"
+                  >
+                    <Icon className="size-5 text-blue-300" />
+                    <p className="mt-5 text-sm font-medium">{name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+      <footer className="border-t bg-white/70 px-5 py-6 text-center text-sm text-muted-foreground">
+        The customer marketplace and booking journey arrive in Phase 3.
+      </footer>
+    </main>
   );
 }
