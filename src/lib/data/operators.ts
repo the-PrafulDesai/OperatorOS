@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { OperatorSummary, Profile } from "@/types/database";
+import { getBookingMetrics, getCustomers, getPlatformBookings } from "@/lib/data/phase3";
 
 const operatorSelect =
   "id,company_name,slug,status,created_at,primary_admin:profiles!operators_primary_admin_user_id_fkey(id,full_name,email,operator_code),locations(id,name,city,address,state,postal_code,country,status,is_published)";
@@ -32,6 +33,9 @@ export async function getDashboardData() {
     { count: totalLocations },
     { count: activeAdmins },
     operators,
+    { count: publishedLocations },
+    customers,
+    bookings,
   ] = await Promise.all([
     admin.from("operators").select("*", { count: "exact", head: true }),
     admin
@@ -45,15 +49,23 @@ export async function getDashboardData() {
       .eq("role", "OPERATOR_ADMIN")
       .eq("is_active", true),
     getOperators(),
+    admin.from("locations").select("*", { count: "exact", head: true }).eq("is_published", true),
+    getCustomers(),
+    getPlatformBookings(),
   ]);
+  const bookingMetrics = await getBookingMetrics(bookings);
   return {
     metrics: {
       totalOperators: totalOperators ?? 0,
       activeOperators: activeOperators ?? 0,
       totalLocations: totalLocations ?? 0,
       activeAdmins: activeAdmins ?? 0,
+      publishedLocations: publishedLocations ?? 0,
+      totalCustomers: customers.length,
+      ...bookingMetrics,
     },
     recentOperators: operators.slice(0, 5),
+    recentBookings: bookings.slice(0, 5),
   };
 }
 

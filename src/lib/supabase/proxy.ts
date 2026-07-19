@@ -23,7 +23,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
   const protectedPath =
     request.nextUrl.pathname.startsWith("/super-admin") ||
-    request.nextUrl.pathname.startsWith("/operator");
+    request.nextUrl.pathname.startsWith("/operator") ||
+    request.nextUrl.pathname.startsWith("/checkout") ||
+    request.nextUrl.pathname.startsWith("/booking-confirmation") ||
+    request.nextUrl.pathname.startsWith("/my-bookings") ||
+    request.nextUrl.pathname.startsWith("/notifications");
   if (!user && protectedPath) {
     const login = request.nextUrl.clone();
     login.pathname = "/login";

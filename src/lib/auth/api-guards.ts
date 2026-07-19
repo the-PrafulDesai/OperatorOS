@@ -11,3 +11,7 @@ export async function getSuperAdminApiProfile() {
   const profile = await getCurrentProfile();
   return profile?.is_active && profile.role === "SUPER_ADMIN" ? profile : null;
 }
+export async function getCustomerApiProfile() {
+  const profile = await getCurrentProfile();
+  return profile?.is_active && profile.role === "CUSTOMER" ? profile : null;
+}

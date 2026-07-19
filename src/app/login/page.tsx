@@ -6,9 +6,10 @@ import { getCurrentProfile } from "@/lib/auth/get-current-profile";
 import { getRoleDashboard } from "@/lib/auth/get-role-dashboard";
 
 export const metadata = { title: "Sign in | OperatorOS" };
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
+  const { next } = await searchParams;
   const profile = await getCurrentProfile().catch(() => null);
-  if (profile?.is_active) redirect(getRoleDashboard(profile.role));
+  if (profile?.is_active) redirect(profile.role === "CUSTOMER" && next?.startsWith("/") && !next.startsWith("//") ? next : getRoleDashboard(profile.role));
   return (
     <main className="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
       <section className="relative hidden overflow-hidden bg-slate-950 p-12 text-white lg:flex lg:flex-col">
@@ -59,7 +60,7 @@ export default async function LoginPage() {
             Use your platform email or the Operator ID issued by your
             administrator.
           </p>
-          <LoginForm />
+          <LoginForm next={next} />
         </div>
       </section>
     </main>

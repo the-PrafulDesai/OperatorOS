@@ -1,0 +1,2 @@
+import { apiError, apiSuccess } from "@/lib/api-response"; import { getCustomerApiProfile } from "@/lib/auth/api-guards"; import { getCustomerBookings } from "@/lib/data/phase3";
+export async function GET(){const profile=await getCustomerApiProfile();if(!profile)return apiError("UNAUTHENTICATED","Sign in to continue.",401);try{return apiSuccess(await getCustomerBookings(profile.id));}catch{return apiError("SERVER_ERROR","Bookings could not be loaded.",500);}}

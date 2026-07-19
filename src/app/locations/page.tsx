@@ -1,0 +1,13 @@
+import { Building2, Search } from "lucide-react";
+import { MarketplaceHeader } from "@/components/marketplace/marketplace-header";
+import { LocationCard } from "@/components/marketplace/location-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getMarketplaceLocations } from "@/lib/data/phase3";
+import type { WorkspaceProductType } from "@/types/database";
+export const metadata = { title: "Explore workspaces | OperatorOS" };
+export default async function LocationsPage({ searchParams }: { searchParams: Promise<{ city?: string; category?: WorkspaceProductType; q?: string }> }) {
+  const filters = await searchParams; const locations = await getMarketplaceLocations(filters).catch(() => []);
+  return <main className="min-h-screen bg-slate-50/70"><MarketplaceHeader /><section className="border-b bg-white"><div className="mx-auto max-w-7xl px-5 py-12 sm:px-8"><p className="eyebrow">Marketplace</p><h1 className="mt-3 text-4xl font-semibold tracking-tight">Spaces for every workday</h1><p className="mt-3 text-muted-foreground">Browse approved workspaces with active, bookable products.</p><form className="mt-7 grid gap-3 rounded-2xl border bg-slate-50 p-3 sm:grid-cols-[1fr_1fr_220px_auto]"><Input name="q" defaultValue={filters.q} placeholder="Workspace name" /><Input name="city" defaultValue={filters.city} placeholder="City" /><Select name="category" defaultValue={filters.category ?? "ALL"}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ALL">All categories</SelectItem><SelectItem value="DAY_PASS">Day Pass</SelectItem><SelectItem value="MEETING_ROOM">Meeting Room</SelectItem><SelectItem value="DEDICATED_DESK">Dedicated Desk</SelectItem><SelectItem value="PRIVATE_CABIN">Private Cabin</SelectItem></SelectContent></Select><Button><Search />Search</Button></form></div></section><section className="mx-auto max-w-7xl px-5 py-10 sm:px-8"><p className="mb-6 text-sm text-muted-foreground">{locations.length} {locations.length === 1 ? "workspace" : "workspaces"}</p>{locations.length ? <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">{locations.map((workspace) => <LocationCard key={workspace.location.id} workspace={workspace} />)}</div> : <div className="rounded-3xl border border-dashed bg-white p-14 text-center"><Building2 className="mx-auto size-10 text-muted-foreground" /><h2 className="mt-4 text-lg font-semibold">No matching workspaces</h2><p className="mt-2 text-sm text-muted-foreground">Try a different city or category.</p></div>}</section></main>;
+}

@@ -9,6 +9,8 @@ import {
   MapPin,
   Menu,
   PackageOpen,
+  CalendarDays,
+  Bell,
   Sparkles,
 } from "lucide-react";
 import { Brand } from "./brand";
@@ -32,6 +34,8 @@ const links = [
     icon: PackageOpen,
   },
   { href: "/operator/preview", label: "Preview", icon: Eye },
+  { href: "/operator/bookings", label: "Bookings", icon: CalendarDays },
+  { href: "/operator/notifications", label: "Notifications", icon: Bell },
 ];
 function OperatorNav({ mobile = false }: { mobile?: boolean }) {
   const path = usePathname();
@@ -80,9 +84,9 @@ export function OperatorShell({
         </div>
         <div className="mt-auto rounded-2xl border bg-background p-4">
           <Sparkles className="mb-3 size-5 text-primary" />
-          <p className="text-sm font-medium">Phase 2 workspace setup</p>
+          <p className="text-sm font-medium">Marketplace operations</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
-            Prepare your location and products for marketplace review.
+            Manage your listing, bookings, and customer fulfilment.
           </p>
         </div>
       </aside>

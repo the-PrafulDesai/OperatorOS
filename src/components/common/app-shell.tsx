@@ -8,6 +8,8 @@ import {
   MapPin,
   Menu,
   Sparkles,
+  CalendarDays,
+  Users,
 } from "lucide-react";
 import { Brand } from "./brand";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,8 @@ const nav = [
   { href: "/super-admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/super-admin/operators", label: "Operators", icon: Building2 },
   { href: "/super-admin/locations", label: "Locations", icon: MapPin },
+  { href: "/super-admin/bookings", label: "Bookings", icon: CalendarDays },
+  { href: "/super-admin/customers", label: "Customers", icon: Users },
 ];
 
 function Navigation({ mobile = false }: { mobile?: boolean }) {
@@ -76,9 +80,9 @@ export function AppShell({
         </div>
         <div className="mt-auto rounded-2xl border bg-background p-4">
           <Sparkles className="mb-3 size-5 text-primary" />
-          <p className="text-sm font-medium">Phase 2 review centre</p>
+          <p className="text-sm font-medium">OperatorOS command centre</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
-            Review completed listings and publish marketplace-ready locations.
+            Oversee marketplace supply, bookings, and platform financials.
           </p>
         </div>
       </aside>

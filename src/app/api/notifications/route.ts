@@ -1,0 +1,2 @@
+import { apiError,apiSuccess } from "@/lib/api-response";import { getCurrentProfile } from "@/lib/auth/get-current-profile";import { getNotifications } from "@/lib/data/phase3";
+export async function GET(){const profile=await getCurrentProfile();if(!profile?.is_active)return apiError("UNAUTHENTICATED","Sign in to continue.",401);try{return apiSuccess(await getNotifications(profile.id))}catch{return apiError("SERVER_ERROR","Notifications could not be loaded.",500)}}

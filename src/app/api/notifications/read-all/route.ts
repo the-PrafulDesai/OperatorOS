@@ -1,0 +1,2 @@
+import { apiError,apiSuccess } from "@/lib/api-response";import { getCurrentProfile } from "@/lib/auth/get-current-profile";import { createAdminClient } from "@/lib/supabase/admin";
+export async function POST(){const profile=await getCurrentProfile();if(!profile?.is_active)return apiError("UNAUTHENTICATED","Sign in to continue.",401);const{error}=await createAdminClient().from("notifications").update({is_read:true}).eq("user_id",profile.id).eq("is_read",false);return error?apiError("SERVER_ERROR","Notifications could not be updated.",500):apiSuccess({updated:true})}

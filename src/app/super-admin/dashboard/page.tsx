@@ -6,6 +6,9 @@ import {
   Plus,
   ShieldCheck,
   Users,
+  CalendarDays,
+  IndianRupee,
+  WalletCards,
 } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { StatusBadge } from "@/components/common/status-badge";
@@ -13,10 +16,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getDashboardData } from "@/lib/data/operators";
 import { format } from "date-fns";
+import { currency } from "@/lib/products/labels";
 
 export const metadata = { title: "Dashboard | OperatorOS" };
 export default async function DashboardPage() {
-  const { metrics, recentOperators } = await getDashboardData();
+  const { metrics, recentOperators, recentBookings } = await getDashboardData();
   const cards = [
     {
       label: "Total operators",
@@ -24,6 +28,10 @@ export default async function DashboardPage() {
       icon: Building2,
       note: "Across the platform",
     },
+    { label: "Published locations", value: metrics.publishedLocations, icon: MapPin, note: "Live in marketplace" },
+    { label: "Customers", value: metrics.totalCustomers, icon: Users, note: "Registered customer accounts" },
+    { label: "Bookings", value: metrics.totalBookings, icon: CalendarDays, note: `${metrics.confirmedBookings} currently confirmed` },
+    { label: "Platform revenue", value: currency(metrics.platformRevenue), icon: IndianRupee, note: `${currency(metrics.operatorEarnings)} operator earnings` },
     {
       label: "Active operators",
       value: metrics.activeOperators,
@@ -66,7 +74,7 @@ export default async function DashboardPage() {
               <div>
                 <p className="text-sm text-muted-foreground">{label}</p>
                 <p className="mt-3 text-3xl font-semibold tracking-tight">
-                  {value.toLocaleString()}
+                  {typeof value === "number" ? value.toLocaleString() : value}
                 </p>
               </div>
               <span className="flex size-10 items-center justify-center rounded-xl bg-primary/8 text-primary">
@@ -78,6 +86,10 @@ export default async function DashboardPage() {
             </p>
           </div>
         ))}
+      </section>
+      <section className="surface-card mt-6 overflow-hidden">
+        <div className="flex items-center justify-between border-b px-6 py-4"><div><h2 className="font-semibold">Recent bookings</h2><p className="mt-1 text-xs text-muted-foreground">Latest marketplace transactions and fulfilment state</p></div>{recentBookings.length>0&&<Link href="/super-admin/bookings" className={buttonVariants({variant:"ghost"})}>View all<ArrowRight/></Link>}</div>
+        {recentBookings.length?<div className="divide-y">{recentBookings.map((booking)=><Link key={booking.id} href={`/super-admin/bookings/${booking.id}`} className="grid gap-3 px-6 py-4 transition hover:bg-muted/30 sm:grid-cols-[1.2fr_1fr_1fr_auto] sm:items-center"><div><p className="font-medium">{booking.booking_reference}</p><p className="mt-1 text-xs text-muted-foreground">{booking.customer?.full_name} · {booking.product?.name}</p></div><p className="text-sm">{booking.location?.name}</p><div><p className="text-sm font-medium">{currency(booking.total_amount)}</p><p className="text-xs text-muted-foreground">Fee {currency(booking.platform_fee)}</p></div><StatusBadge status={booking.status}/></Link>)}</div>:<div className="p-10 text-center text-sm text-muted-foreground"><WalletCards className="mx-auto mb-3"/>No financial activity yet.</div>}
       </section>
       <section className="surface-card mt-6 overflow-hidden">
         <div className="flex items-center justify-between border-b px-5 py-4 sm:px-6">

@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { loginSchema } from "@/validations/operator";
 import type { Profile } from "@/types/database";
+import { safeInternalPath } from "@/validations/customer-auth";
 
 export async function POST(request: Request) {
   const parsed = loginSchema.safeParse(await request.json().catch(() => null));
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
       parsed.error.issues[0]?.message ?? "Check your login details.",
       400,
     );
-  const { identifier, password } = parsed.data;
+  const { identifier, password, next } = parsed.data;
   let email = identifier.trim().toLowerCase();
   if (!identifier.includes("@")) {
     const { data } = await createAdminClient()
@@ -73,5 +74,5 @@ export async function POST(request: Request) {
       );
     }
   }
-  return apiSuccess({ redirectTo: getRoleDashboard(profile.role) });
+  return apiSuccess({ redirectTo: profile.role === "CUSTOMER" ? safeInternalPath(next) : getRoleDashboard(profile.role) });
 }

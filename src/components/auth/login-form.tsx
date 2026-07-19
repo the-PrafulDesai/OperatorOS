@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type Values = z.infer<typeof loginSchema>;
-export function LoginForm() {
+export function LoginForm({ next }: { next?: string }) {
   const router = useRouter();
   const [show, setShow] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -21,7 +21,7 @@ export function LoginForm() {
     formState: { errors, isSubmitting },
   } = useForm<Values>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { identifier: "", password: "" },
+    defaultValues: { identifier: "", password: "", next },
   });
   const onSubmit = async (values: Values) => {
     setServerError("");
@@ -111,6 +111,9 @@ export function LoginForm() {
       <p className="text-center text-xs leading-5 text-muted-foreground">
         Operator accounts can use either their email address or assigned
         Operator ID.
+      </p>
+      <p className="text-center text-sm text-muted-foreground">
+        New to OperatorOS? <a className="font-medium text-primary hover:underline" href={`/customer/signup${next ? `?next=${encodeURIComponent(next)}` : ""}`}>Create a customer account</a>
       </p>
     </form>
   );

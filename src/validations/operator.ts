@@ -2,6 +2,7 @@ import { z } from "zod";
 export const loginSchema = z.object({
   identifier: z.string().trim().min(3, "Enter your email or Operator ID."),
   password: z.string().min(1, "Enter your password."),
+  next: z.string().optional(),
 });
 export const createOperatorSchema = z.object({
   companyName: z.string().trim().min(2, "Enter the company name.").max(120),

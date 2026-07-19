@@ -1,0 +1,2 @@
+import { apiError, apiSuccess } from "@/lib/api-response"; import { getCustomerApiProfile } from "@/lib/auth/api-guards"; import { getCustomerBooking } from "@/lib/data/phase3";
+export async function GET(_r:Request,{params}:{params:Promise<{bookingId:string}>}){const profile=await getCustomerApiProfile();if(!profile)return apiError("UNAUTHENTICATED","Sign in to continue.",401);const data=await getCustomerBooking(profile.id,(await params).bookingId);return data?apiSuccess(data):apiError("NOT_FOUND","Booking not found.",404);}

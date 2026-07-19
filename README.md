@@ -1,32 +1,27 @@
 # OperatorOS
 
-OperatorOS is a multi-category coworking workspace booking and operations platform. Phase 2 adds complete operator location setup, workspace-product management, protected customer previews, and a Super Admin publishing workflow to the secure Phase 1 foundation.
+OperatorOS is a deployment-ready coworking marketplace and operations platform for three roles: Customers discover and book; Operator Admins configure and fulfil assigned-location inventory; Super Admins provision operators, publish supply, and oversee platform financials.
 
-## Current status — Phase 2 complete
+## MVP status
 
-Implemented:
+- **Phase 1 — complete:** Supabase authentication, strict roles, Super Admin bootstrap, operator provisioning, and location assignment.
+- **Phase 2 — complete:** Location profiles, media, operating hours, Day Pass, Meeting Room, Dedicated Desk, Private Cabin inventory, review, approval, and publishing.
+- **Phase 3 — complete in code:** Public discovery, customer signup, live availability, atomic ten-minute holds, booking history, in-app notifications, operator fulfilment, refunds, and Super Admin financial oversight.
 
-- Super Admin bootstrap, dual-identifier login, protected roles, and operator provisioning
-- Guided location overview, amenities, hours, policies, and media management
-- Day Pass, Meeting Room, Dedicated Desk, and Private Cabin configuration
-- Category-specific pricing, availability, activation, and Dedicated Desk inventory
-- Server-calculated publishing readiness and protected customer preview
-- Submit-for-review, request-changes, approve, and publish workflow
-- Operator-scoped Storage RLS for public-read workspace marketing media
-- Responsive, presentation-ready interfaces for desktop and mobile
+The stack is Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui with Base UI, Supabase PostgreSQL/Auth/Storage, React Hook Form, and Zod.
 
-## Stack
+Payments and refunds are simulated. The 18% tax and operator commission breakdown are demo calculations, not production tax or commercial-agreement logic.
 
-Next.js App Router, TypeScript, Tailwind CSS, shadcn/ui Base UI with the Nova preset, Supabase PostgreSQL/Auth/Storage, `@supabase/ssr`, React Hook Form, and Zod.
+## Setup and deployment
 
-## Setup
+Apply the guides in order: [Phase 1](docs/PHASE_1_SETUP.md), [Phase 2](docs/PHASE_2_SETUP.md), and [Phase 3](docs/PHASE_3_SETUP.md). Use the [five-minute demo walkthrough](docs/DEMO_WALKTHROUGH.md) for founder presentation and [deployment guide](docs/DEPLOYMENT.md) for Vercel/Supabase production preparation.
 
-Start with [docs/PHASE_1_SETUP.md](docs/PHASE_1_SETUP.md), then apply [docs/PHASE_2_SETUP.md](docs/PHASE_2_SETUP.md).
+After remote migrations and environment setup, run:
 
-## Roadmap
+```bash
+npm run bootstrap:superadmin
+npm run bootstrap:demo-customer
+npm run dev
+```
 
-- **Phase 1 — Foundation:** Authentication, Super Admin, and operator provisioning — complete
-- **Phase 2 — Workspace operations:** Location profiles, media, workspace inventory, review, and publishing — complete
-- **Phase 3 — Marketplace:** Customer discovery, booking, and deployment readiness — next
-
-Customer booking arrives in Phase 3. Final deployment and production verification will be completed after Phase 3.
+The application is ready for manual production migration, demo-data preparation, and Vercel deployment. Production deployment is not implied by the local implementation.
