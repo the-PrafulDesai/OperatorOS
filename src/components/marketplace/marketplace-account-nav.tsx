@@ -62,9 +62,9 @@ export function MarketplaceAccountNav({
         <Link href="/login" className={buttonVariants({ variant: "outline" })}>
           Sign In
         </Link>
-        <Link href="/customer/signup" className={buttonVariants()}>
+        {/* <Link href="/customer/signup" className={buttonVariants()}>
           Create Account
-        </Link>
+        </Link> */}
       </nav>
     );
   }
