@@ -12,7 +12,8 @@ It connects three sides of the workspace ecosystem:
 
 [Live Product](https://operator-os-stylework.vercel.app/) ·
 [5-Minute Product Demo](https://www.loom.com/share/c0492ad6ef144da8913b4ec8bb9b7d5b) ·
-[Product Case Study & PRD](docs/OperatorOS_Product_Case_Study_and_PRD.pdf)
+[OperatorOS - Product Case Study and Product Requirements Document.docx](https://github.com/user-attachments/files/30170068/OperatorOS.-.Product.Case.Study.and.Product.Requirements.Document.docx)
+
 
 ---
 
