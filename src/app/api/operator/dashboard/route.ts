@@ -1,21 +1,2 @@
-import { apiError, apiSuccess } from "@/lib/api-response";
-import { getCurrentProfile } from "@/lib/auth/get-current-profile";
-import { getOperatorDashboard } from "@/lib/data/operators";
-export async function GET() {
-  const profile = await getCurrentProfile();
-  if (!profile) return apiError("UNAUTHENTICATED", "Sign in to continue.", 401);
-  if (!profile.is_active || profile.role !== "OPERATOR_ADMIN")
-    return apiError(
-      "UNAUTHORIZED",
-      "You do not have access to this resource.",
-      403,
-    );
-  const data = await getOperatorDashboard(profile.id);
-  return data
-    ? apiSuccess(data)
-    : apiError(
-        "ASSIGNMENT_NOT_FOUND",
-        "No active operator assignment was found.",
-        404,
-      );
-}
+import { apiError, apiSuccess } from "@/lib/api-response"; import { getOperatorApiContext } from "@/lib/auth/api-guards"; import { getOperatorWorkspace } from "@/lib/data/phase2"; import { evaluateLocationCompletion } from "@/lib/completion/location-completion";
+export async function GET() { const auth = await getOperatorApiContext(); if (!auth) return apiError("UNAUTHORIZED", "Operator access is required.", 403); const workspace = await getOperatorWorkspace(auth.profile.id); if (!workspace) return apiError("ASSIGNMENT_NOT_FOUND", "No active location assignment was found.", 404); const completion = evaluateLocationCompletion(workspace); const inventoryCount = workspace.products.reduce((sum, product) => sum + product.inventory.length, 0); return apiSuccess({ workspace, completion, metrics: { totalProducts: workspace.products.length, activeProducts: workspace.products.filter((p) => p.status === "ACTIVE").length, draftProducts: workspace.products.filter((p) => p.status === "DRAFT").length, inventoryCount } }); }

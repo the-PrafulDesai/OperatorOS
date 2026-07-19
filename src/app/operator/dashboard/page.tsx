@@ -1,134 +1,14 @@
-import {
-  Building2,
-  CheckCircle2,
-  Compass,
-  MapPin,
-  Rocket,
-  ShieldCheck,
-} from "lucide-react";
-import { PageHeader } from "@/components/common/page-header";
-import { StatusBadge } from "@/components/common/status-badge";
-import { requireRole } from "@/lib/auth/require-role";
-import { getOperatorDashboard } from "@/lib/data/operators";
+import Link from "next/link"; import { AlertTriangle, ArrowRight, CheckCircle2, Circle, Eye, MapPin, PackageOpen, Send, Warehouse } from "lucide-react";
+import { CompletionProgress } from "@/components/common/completion-progress"; import { PageHeader } from "@/components/common/page-header"; import { StatusBadge } from "@/components/common/status-badge"; import { buttonVariants } from "@/components/ui/button"; import { evaluateLocationCompletion } from "@/lib/completion/location-completion"; import { getOperatorWorkspace } from "@/lib/data/phase2"; import { requireRole } from "@/lib/auth/require-role"; import { cn } from "@/lib/utils";
 export const metadata = { title: "Operator Dashboard | OperatorOS" };
-export default async function OperatorDashboardPage() {
-  const profile = await requireRole("OPERATOR_ADMIN");
-  const data = await getOperatorDashboard(profile.id);
-  const location = data?.locations[0] as
-    | {
-        name: string;
-        city: string;
-        address: string;
-        state: string | null;
-        postal_code: string | null;
-        country: string;
-        status: string;
-        is_published: boolean;
-      }
-    | undefined;
-  if (!data?.operator)
-    return (
-      <div className="page-container">
-        <div className="surface-card p-10 text-center">
-          <Compass className="mx-auto text-muted-foreground" />
-          <h1 className="mt-4 text-xl font-semibold">Assignment pending</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Contact your platform administrator to complete your operator
-            assignment.
-          </p>
-        </div>
-      </div>
-    );
-  return (
-    <main className="page-container">
-      <PageHeader
-        eyebrow="Operator workspace"
-        title={`Welcome, ${profile.full_name.split(" ")[0]}.`}
-        description="Your OperatorOS account is ready. Here is the workspace currently assigned to you."
-      />
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
-        <section className="surface-card p-6">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <Building2 />
-            </span>
-            <StatusBadge status={data.operator.status} />
-          </div>
-          <p className="mt-6 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-            Operator company
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold">
-            {data.operator.company_name}
-          </h2>
-          <div className="mt-6 grid gap-4 border-t pt-5 sm:grid-cols-2">
-            <div>
-              <p className="text-xs text-muted-foreground">Operator ID</p>
-              <p className="mt-1 font-mono text-sm font-semibold">
-                {profile.operator_code}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Account access</p>
-              <p className="mt-1 flex items-center gap-1.5 text-sm">
-                <ShieldCheck className="size-4 text-emerald-600" />
-                Active and secure
-              </p>
-            </div>
-          </div>
-        </section>
-        <section className="surface-card p-6">
-          <div className="flex items-start justify-between">
-            <span className="flex size-11 items-center justify-center rounded-2xl bg-amber-50 text-amber-700">
-              <MapPin />
-            </span>
-            {location && <StatusBadge status={location.status} />}
-          </div>
-          <p className="mt-6 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-            Assigned location
-          </p>
-          <h2 className="mt-2 text-xl font-semibold">
-            {location?.name ?? "Assignment pending"}
-          </h2>
-          {location && (
-            <>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {location.address}, {location.city}
-                {location.state ? `, ${location.state}` : ""}{" "}
-                {location.postal_code}
-              </p>
-              <div className="mt-5 flex items-center justify-between border-t pt-4">
-                <span className="text-xs text-muted-foreground">
-                  Marketplace visibility
-                </span>
-                <StatusBadge status={location.is_published} />
-              </div>
-            </>
-          )}
-        </section>
-      </div>
-      <section className="mt-6 overflow-hidden rounded-2xl bg-slate-950 text-white shadow-xl">
-        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[auto_1fr_auto] lg:items-center">
-          <span className="flex size-12 items-center justify-center rounded-2xl bg-blue-500/20 text-blue-300">
-            <Rocket />
-          </span>
-          <div>
-            <p className="text-sm font-semibold text-blue-300">
-              Next up · Phase 2
-            </p>
-            <h2 className="mt-1 text-xl font-semibold">
-              Complete your location and launch inventory.
-            </h2>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-              You will be able to add photos, operating details, Day Passes,
-              Meeting Rooms, Dedicated Desks, and Private Cabins.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-slate-300">
-            <CheckCircle2 className="size-4 text-emerald-400" />
-            Foundation ready
-          </div>
-        </div>
-      </section>
-    </main>
-  );
-}
+export default async function OperatorDashboardPage() { const profile = await requireRole("OPERATOR_ADMIN"); const workspace = await getOperatorWorkspace(profile.id); if (!workspace) return <div className="page-container"><div className="surface-card p-10 text-center"><MapPin className="mx-auto text-muted-foreground" /><h1 className="mt-4 text-xl font-semibold">Assignment pending</h1><p className="mt-2 text-sm text-muted-foreground">Contact your platform administrator to complete your location assignment.</p></div></div>;
+  const completion = evaluateLocationCompletion(workspace); const active = workspace.products.filter((p) => p.status === "ACTIVE").length; const drafts = workspace.products.filter((p) => p.status === "DRAFT").length; const inventory = workspace.products.reduce((sum,p) => sum + p.inventory.length,0); const next = completion.missing[0];
+  return <main className="page-container"><PageHeader eyebrow="Operator command centre" title={`Welcome back, ${profile.full_name.split(" ")[0]}.`} description="Complete your location, prepare workspace products, and move confidently toward marketplace approval." actions={<Link href="/operator/preview" className={buttonVariants({ variant: "outline" })}><Eye />Preview listing</Link>} />
+    {workspace.location.review_status === "CHANGES_REQUESTED" && <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-5"><div className="flex gap-3"><AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-700" /><div><p className="font-semibold text-amber-950">Changes requested by the review team</p><p className="mt-1 text-sm leading-6 text-amber-900">{workspace.location.review_notes}</p><Link href="/operator/location" className={cn(buttonVariants({ variant: "outline", size: "sm" }),"mt-3 border-amber-300 bg-amber-50")}>Review location details<ArrowRight /></Link></div></div></div>}
+    {workspace.location.review_status === "IN_REVIEW" && <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-5"><p className="font-semibold text-blue-950">Your location is in review</p><p className="mt-1 text-sm text-blue-800">Editing is temporarily paused while the platform team checks your listing.</p></div>}
+    {workspace.location.is_published && <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5"><p className="font-semibold text-emerald-950">Published and marketplace-ready</p><p className="mt-1 text-sm text-emerald-800">Your location has been approved and is ready for the Phase 3 customer marketplace.</p></div>}
+    <div className="grid gap-5 xl:grid-cols-[1.15fr_.85fr]"><section className="surface-card p-6"><div className="flex flex-col gap-6 sm:flex-row sm:items-center"><CompletionProgress value={completion.percentage} size="lg" /><div className="flex-1"><div className="flex flex-wrap items-center gap-2"><StatusBadge status={workspace.location.review_status} /><StatusBadge status={workspace.location.is_published} /></div><h2 className="mt-3 text-xl font-semibold">{completion.canSubmit ? "Ready for platform review" : `${completion.missing.length} setup tasks remaining`}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{next ? `Recommended next: ${next.detail}.` : "Every publishing requirement is complete. Submit when you are ready."}</p>{next ? <Link href={next.href} className={cn(buttonVariants(),"mt-4")}>Continue setup<ArrowRight /></Link> : workspace.location.review_status !== "IN_REVIEW" && workspace.location.review_status !== "APPROVED" ? <Link href="/operator/location?tab=publishing" className={cn(buttonVariants(),"mt-4")}><Send />Submit for review</Link> : null}</div></div></section>
+      <section className="surface-card p-6"><div className="flex items-start justify-between"><div><p className="eyebrow">Assigned location</p><h2 className="mt-2 text-xl font-semibold">{workspace.location.name}</h2><p className="mt-1 text-sm text-muted-foreground">{workspace.location.city}, {workspace.location.country}</p></div><span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Warehouse /></span></div><div className="mt-6 grid grid-cols-2 gap-3"><div className="rounded-xl bg-muted/50 p-3"><p className="text-xs text-muted-foreground">Location status</p><div className="mt-2"><StatusBadge status={workspace.location.status} /></div></div><div className="rounded-xl bg-muted/50 p-3"><p className="text-xs text-muted-foreground">Review status</p><div className="mt-2"><StatusBadge status={workspace.location.review_status} /></div></div></div></section></div>
+    <section className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[{label:"Total products",value:workspace.products.length,icon:PackageOpen},{label:"Active products",value:active,icon:CheckCircle2},{label:"Draft products",value:drafts,icon:Circle},{label:"Desk inventory",value:inventory,icon:Warehouse}].map(({label,value,icon:Icon}) => <div key={label} className="surface-card p-5"><div className="flex items-center justify-between"><p className="text-sm text-muted-foreground">{label}</p><Icon className="size-4 text-primary" /></div><p className="mt-3 text-3xl font-semibold">{value}</p></div>)}</section>
+    <section className="surface-card mt-5 p-6"><div className="flex items-center justify-between"><div><h2 className="font-semibold">Publishing checklist</h2><p className="mt-1 text-sm text-muted-foreground">A live assessment based on saved workspace data.</p></div><span className="text-sm font-medium text-primary">{completion.complete.length}/{completion.complete.length + completion.missing.length} complete</span></div><div className="mt-5 grid gap-3 md:grid-cols-2">{[...completion.complete,...completion.missing].map((item) => <Link key={item.key} href={item.href} className="flex items-center gap-3 rounded-xl border p-4 transition-colors hover:bg-muted/30"><span className={cn("flex size-8 items-center justify-center rounded-full",item.complete?"bg-emerald-50 text-emerald-700":"bg-amber-50 text-amber-700")}>{item.complete?<CheckCircle2 className="size-4" />:<Circle className="size-4" />}</span><div className="flex-1"><p className="text-sm font-medium">{item.label}</p><p className="mt-0.5 text-xs text-muted-foreground">{item.detail}</p></div><ArrowRight className="size-4 text-muted-foreground" /></Link>)}</div></section>
+  </main>; }

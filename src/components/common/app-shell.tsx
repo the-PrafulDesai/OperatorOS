@@ -76,9 +76,9 @@ export function AppShell({
         </div>
         <div className="mt-auto rounded-2xl border bg-background p-4">
           <Sparkles className="mb-3 size-5 text-primary" />
-          <p className="text-sm font-medium">Phase 1 foundation</p>
+          <p className="text-sm font-medium">Phase 2 review centre</p>
           <p className="mt-1 text-xs leading-5 text-muted-foreground">
-            Provision operators and prepare their first location.
+            Review completed listings and publish marketplace-ready locations.
           </p>
         </div>
       </aside>

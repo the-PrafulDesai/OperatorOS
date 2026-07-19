@@ -2,13 +2,19 @@ import { Badge } from "@/components/ui/badge";
 import { Circle } from "lucide-react";
 
 export function StatusBadge({ status }: { status: string | boolean }) {
+  const labels: Record<string, string> = {
+    ACTIVE: "Active", DRAFT: "Draft", INACTIVE: "Inactive", SUSPENDED: "Suspended",
+    IN_REVIEW: "In review", CHANGES_REQUESTED: "Changes requested", APPROVED: "Approved",
+    AVAILABLE: "Available", BLOCKED: "Blocked",
+  };
   const value =
     typeof status === "boolean"
       ? status
         ? "Published"
         : "Unpublished"
-      : status.replaceAll("_", " ");
-  const good = status === true || status === "ACTIVE";
+      : labels[status] ?? status.replaceAll("_", " ");
+  const good = status === true || status === "ACTIVE" || status === "APPROVED" || status === "AVAILABLE";
+  const info = status === "IN_REVIEW";
   const caution =
     status === "DRAFT" || status === false || status === "SUSPENDED";
   return (
@@ -17,7 +23,9 @@ export function StatusBadge({ status }: { status: string | boolean }) {
       className={
         good
           ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-          : caution
+          : info
+            ? "border-blue-200 bg-blue-50 text-blue-700"
+          : caution || status === "CHANGES_REQUESTED" || status === "BLOCKED"
             ? "border-amber-200 bg-amber-50 text-amber-700"
             : "border-slate-200 bg-slate-50 text-slate-600"
       }
